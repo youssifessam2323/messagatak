@@ -38,3 +38,4 @@ build/
 ####others####
 application.yml
 application-dev.yml
+secure-connect.zip
