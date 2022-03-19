@@ -23,6 +23,14 @@ public class Folder {
     @CassandraType(type = TEXT)
     private String color;
 
+    public Folder(){}
+
+    public Folder(String userId, String label, String color) {
+        this.userId = userId;
+        this.label = label;
+        this.color = color;
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -45,5 +53,14 @@ public class Folder {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    @Override
+    public String toString() {
+        return "Folder{" +
+                "userId='" + userId + '\'' +
+                ", label='" + label + '\'' +
+                ", color='" + color + '\'' +
+                '}';
     }
 }
