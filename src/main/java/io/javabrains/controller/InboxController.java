@@ -3,6 +3,7 @@ package io.javabrains.controller;
 
 import io.javabrains.messagatak.folders.Folder;
 import io.javabrains.messagatak.folders.FolderRepository;
+import io.javabrains.messagatak.folders.FolderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,7 +14,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 @Controller
 public class InboxController {
@@ -22,8 +22,11 @@ public class InboxController {
 
     private final FolderRepository folderRepository;
 
-    public InboxController(FolderRepository folderRepository) {
+    private final FolderService folderService;
+
+    public InboxController(FolderRepository folderRepository, FolderService folderService) {
         this.folderRepository = folderRepository;
+        this.folderService = folderService;
     }
 
     @GetMapping(path = {"/", "/home"})
@@ -40,7 +43,12 @@ public class InboxController {
 
         List<Folder> folders = folderRepository.findAllByUserId(userId);
 
+        List<Folder> defaultFolders = folderService.getDefaultFolders(userId);
+
         model.addAttribute("folders", folders);
+
+        model.addAttribute("defaultFolders", folders);
+
         return "inbox-page";
     }
 }
