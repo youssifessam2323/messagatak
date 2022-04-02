@@ -1,6 +1,12 @@
 <!doctype html>
 <html lang="en" xmlns="http://www.thymeleaf.org">
 <head>
+    <style type="text/css">
+        a {
+            outline: none;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
     <div th:fragment="folder-list (panelName, folders)">
@@ -9,7 +15,7 @@
             <div class="card-body">
                 <ul class="list-group">
                     <li th:each="folder : ${folders}"  class="list-group-item d-flex justify-content-between align-items-center">
-                        <span th:text="${folder.label}"></span>
+                        <a th:href="@{'/?folder=' + ${folder.label}}" th:text="${folder.label}" ></a>
                         <span class="badge bg-primary rounded-pill">14</span>
                     </li>
                 </ul>

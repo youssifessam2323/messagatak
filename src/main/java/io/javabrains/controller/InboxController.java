@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
@@ -39,7 +40,11 @@ public class InboxController {
     }
 
     @GetMapping(path = {"/", "/home"})
-    public String homePage(@AuthenticationPrincipal OAuth2User principal, Model model){
+    public String homePage(
+            @AuthenticationPrincipal OAuth2User principal,
+            Model model,
+            @RequestParam(required = false) String folder
+    ){
         if(principal == null || !StringUtils.hasText(principal.getAttribute("login"))){
             return "index";
         }
@@ -56,14 +61,17 @@ public class InboxController {
 
         model.addAttribute("folders", folders);
 
-        model.addAttribute("defaultFolders", folders);
+        model.addAttribute("defaultFolders", defaultFolders);
 
+        model.addAttribute("name", principal.getAttribute("name"));
         //fetch messages
-        String label = "Inbox";
+        String label = !StringUtils.hasText(folder) ? "Inbox" : folder;
+
+
         List<EmailListItem> emailList = emailListItemRepository.findAllByKey_UserIdAndKey_Label(userId, label);
 
 
-        emailList.stream()
+        emailList
                 .forEach(email -> {
                     PrettyTime p = new PrettyTime();
                     UUID  timeUUID = email.getEmailListItemKey().getTimeUUID();
@@ -71,6 +79,7 @@ public class InboxController {
                     email.setAgoTimeString(p.format(emailDateTime));
                 });
         model.addAttribute("emailList", emailList);
+        model.addAttribute("folderName", label);
 
         return "inbox-page";
     }

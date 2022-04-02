@@ -1,6 +1,8 @@
 package io.javabrains;
 
 import com.datastax.oss.driver.api.core.uuid.Uuids;
+import io.javabrains.messagatak.email.Email;
+import io.javabrains.messagatak.email.EmailRepository;
 import io.javabrains.messagatak.emaillist.EmailListItem;
 import io.javabrains.messagatak.emaillist.EmailListItemKey;
 import io.javabrains.messagatak.emaillist.EmailListItemRepository;
@@ -11,7 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 import java.util.List;
 
 @SpringBootApplication
@@ -20,11 +21,13 @@ public class MessagatakApp {
 
 	private final FolderRepository folderRepository;
 	private final EmailListItemRepository emailListItemRepository;
+	private final EmailRepository emailRepository;
 
 
-	public MessagatakApp(FolderRepository folderRepository, EmailListItemRepository emailListItemRepository) {
+	public MessagatakApp(FolderRepository folderRepository, EmailListItemRepository emailListItemRepository, EmailRepository emailRepository) {
 		this.folderRepository = folderRepository;
 		this.emailListItemRepository = emailListItemRepository;
+		this.emailRepository = emailRepository;
 	}
 
 
@@ -55,11 +58,22 @@ public class MessagatakApp {
 			EmailListItem item = new EmailListItem();
 
 			item.setEmailListItemKey(key);
-			item.setTo(List.of("youssifessam2323"));
+			item.setFrom("youssifessam2323");
+			item.setTo(List.of("koushikkothagal"));
 			item.setSubject("Subject " + i);
 			item.setUnread(true);
 
 			emailListItemRepository.save(item);
+
+			Email email  = new Email();
+
+			email.setId(item.getEmailListItemKey().getTimeUUID());
+			email.setBody("Body " + i);
+			email.setSubject(item.getSubject());
+			email.setTo(item.getTo());
+			email.setFrom("youssifessam2323");
+
+			emailRepository.save(email);
 		}
 	}
 }
